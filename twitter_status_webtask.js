@@ -6,7 +6,8 @@
  const express = require('express');
  const Webtask = require('webtask-tools');
  const async   = require('async');
- const Twit    = require('twit@2.2.3')
+ const Twit    = require('twit@2.2.3');
+ const bodyParser = require('body-parser');
  const app     = express();
 
  /*
@@ -14,14 +15,14 @@
  */
  let accessToken = null;
  let lastLogin = null;
-
- app.post('/tweet', function (req, res) {
+ var jsonParser = bodyParser.json();
+ app.post('/tweet', jsonParser, function (req, res) {
    if (!req.headers['authorization']){ return res.status(401).json({ error: 'unauthorized'}); }
    if (req.webtaskContext.body === undefined) {return res.status(400).json({error: 'tweet status is required'}); }
    if (!req.webtaskContext.body || !req.webtaskContext.body['status_message']){return res.status(400).json({error: 'status_message is required'}); }
    const context = req.webtaskContext;
    const token = req.headers['authorization'].split(' ')[1];
-   const reqBody = req.webtaskContext.body;
+   const reqBody = req.body;
    async.waterfall([
      async.apply(verifyJWT, context, reqBody, token),
      getAccessToken,
