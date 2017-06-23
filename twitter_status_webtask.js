@@ -18,8 +18,7 @@
  var jsonParser = bodyParser.json();
  app.post('/tweet', jsonParser, function (req, res) {
    if (!req.headers['authorization']){ return res.status(401).json({ error: 'unauthorized'}); }
-   if (req.webtaskContext.body === undefined) {return res.status(400).json({error: 'tweet status is required'}); }
-   if (!req.webtaskContext.body || !req.webtaskContext.body['status_message']){return res.status(400).json({error: 'status_message is required'}); }
+   if (!req.body || !req.body['status_message']){return res.status(400).json({error: 'status_message is required'}); }
    const context = req.webtaskContext;
    const token = req.headers['authorization'].split(' ')[1];
    const reqBody = req.body;
